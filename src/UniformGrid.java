@@ -1,15 +1,16 @@
-import java.sql.Array;
+import generator.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class UniformGrid {
 
-    private int width, height;
-    private double size;
+    private final int width, height;
+    private final double size;
 
     private static final double DEFAULT_ALPHA = 1.5;
-    private MinMaxBox box;
-    private List<Point>[] grid;
+    private final MinMaxBox box;
+    private final List<Point>[] grid;
 
     private double calculateSize(double alpha, double xl, double xr, double yb, double yt, int count) {
         return alpha * Math.sqrt(((xr - xl) * (yt - yb)) / count);
@@ -25,6 +26,7 @@ public class UniformGrid {
         width = calculateRes(box.getMaxX(), box.getMinX());
         height = calculateRes(box.getMaxY(), box.getMinY());
 
+        //noinspection unchecked
         grid = (ArrayList<Point>[]) new ArrayList[width * height];
 
         for(Point p : points) {
@@ -49,20 +51,43 @@ public class UniformGrid {
         return grid[y * width + x];
     }
 
+    public boolean isEmpty(int x, int y) {
+        List<Point> list = get(x, y);
+        if(list == null) {
+            return true;
+        }
+
+        return list.isEmpty();
+    }
+
+    public double getXAsDouble(Point p) {
+        double cellWidth = (box.getMaxX() - box.getMinX()) / width;
+        return ((p.getX() - box.getMinX()) / cellWidth);
+    }
+
+    public double getYAsDouble(Point p) {
+        double cellHeight = (box.getMaxY() - box.getMinY()) / height;
+        return ((p.getY() - box.getMinY()) / cellHeight);
+    }
+
     public int getX(Point p) {
-        return (int) ((p.getX() - box.getMinX()) / width);
+        int x = (int) getXAsDouble(p);
+
+        return x >= width ? x - 1 : x;
     }
 
     public int getY(Point p) {
-        return (int) ((p.getY() - box.getMinY()) / height);
+        int y = (int) getYAsDouble(p);
+
+        return y >= height ? y - 1 : y;
     }
 
-    public double getMaxDist(Point p) {
+    public double getMinDist(Point p) {
         int x = getX(p);
         int y = getY(p);
 
-        double xCellPos = (p.getX() - box.getMinX()) / width;
-        double yCellPos = (p.getY() - box.getMinY()) / height;
+        double xCellPos = getXAsDouble(p);
+        double yCellPos = getYAsDouble(p);
 
         double xLDist = xCellPos - x;
         double xRDist = (x+1) - xCellPos;
@@ -70,10 +95,10 @@ public class UniformGrid {
         double yTDist = yCellPos - y;
         double yBDist = (y+1) - yCellPos;
 
-        double xDist = Math.max(xLDist, xRDist);
-        double yDist = Math.max(yTDist, yBDist);
+        double xDist = Math.min(xLDist, xRDist);
+        double yDist = Math.min(yTDist, yBDist);
 
-        return Math.max(xDist, yDist);
+        return Math.min(xDist, yDist);
     }
 
     public double getSize() {

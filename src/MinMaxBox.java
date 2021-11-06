@@ -1,3 +1,5 @@
+import generator.Point;
+
 public class MinMaxBox {
     private double minX, maxX;
     private double minY, maxY;

@@ -1,50 +1,56 @@
+import generator.Point;
+
 import java.util.Arrays;
 
 public record NearestNeighbors(Point[] points, UniformGrid grid) {
 
     public int[][] nearestNeighbors(int k, int[] jset) {
-        boolean[][] visited = new boolean[grid.getWidth()][grid.getHeight()];
         int[][] c = new int[jset.length][k];
-
         DistanceIndex[] distanceIndices = new DistanceIndex[k];
-        int l = 0;
 
         for (int r = 0; r < jset.length; ++r) {
+            boolean[][] visited = new boolean[grid.getWidth()][grid.getHeight()];
+            int l = 1;
+
             Point p = points[jset[r]];
             int ic = grid.getX(p);
             int jc = grid.getY(p);
 
             for (int i = 0; i < k; ++i) {
-                distanceIndices[i].distance = Double.POSITIVE_INFINITY;
+                distanceIndices[i] = new DistanceIndex(Double.POSITIVE_INFINITY, i);
             }
 
             double dmin = Double.POSITIVE_INFINITY;
-            double dsh = grid.getMaxDist(p);
+            double dsh = grid.getMinDist(p);
 
             while (dmin > dsh) {
-                int il = Math.max(1, jc - l);
-                int jl = Math.max(1, jc - l);
-                int ih = Math.min(grid.getWidth(), ic + l);
-                int jh = Math.min(grid.getHeight(), jc + l);
+                int il = Math.max(0, jc - l);
+                int ih = Math.min(grid.getWidth() - 1, ic + l);
+
+                int jl = Math.max(0, jc - l);
+                int jh = Math.min(grid.getHeight() - 1, jc + l);
 
                 for (int i = il; i <= ih; ++i) {
-                    int ji = 1;
-                    if (i != il && i != ih) {
-                        ji = jh - jl;
-                    }
+                    int ji;
+                    if(i == il || i == ih) ji = 1;
+                    else ji = jh - jl;
 
-                    for (int j = jl; j < jh; j += ji) {
-                        if (!visited[i][j] && !grid.get(i, j).isEmpty()) {
-                            Point first = grid.get(i, j).get(0);
-                            double diffX = p.getX() - first.getX();
-                            double diffY = p.getY() - first.getY();
+                    for (int j = jl; j <= jh; j += ji) {
+                        if (!visited[i][j] && !grid.isEmpty(i, j)) {
 
-                            double disSq = diffX * diffX + diffY * diffY;
-                            if (disSq < distanceIndices[k - 1].distance) {
-                                distanceIndices[k - 1].distance = disSq;
-                                distanceIndices[k - 1].index = r;
+                            for(Point current : grid.get(i, j)) {
+                                if(current == p) continue;
 
-                                Arrays.sort(distanceIndices);
+                                double diffX = p.getX() - current.getX();
+                                double diffY = p.getY() - current.getY();
+
+                                double dis = Math.sqrt(diffX * diffX + diffY * diffY);
+                                if (dis < distanceIndices[k - 1].distance) {
+                                    distanceIndices[k - 1].distance = dis;
+                                    distanceIndices[k - 1].index = current.getIndex();
+
+                                    Arrays.sort(distanceIndices);
+                                }
                             }
 
                             visited[i][j] = true;
@@ -60,7 +66,6 @@ public record NearestNeighbors(Point[] points, UniformGrid grid) {
             for (int s = 0; s < k; ++s) {
                 c[r][s] = distanceIndices[s].index;
             }
-
         }
 
         return c;

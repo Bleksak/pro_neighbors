@@ -2,8 +2,17 @@ import generator.Point;
 
 import java.util.Arrays;
 
+/**
+ * @author Jiri Velek
+ * algorithm to find k nearest neighbors
+ */
 public record NearestNeighbors(Point[] points, UniformGrid grid) {
 
+    /**
+     * @param k how many neighbors to find
+     * @param jset for which points should we find k neighbors
+     * @return set c[r][s] where r is from jset and s is in range <0; k)
+     */
     public int[][] nearestNeighbors(int k, int[] jset) {
         int[][] c = new int[jset.length][k];
         DistanceIndex[] distanceIndices = new DistanceIndex[k];

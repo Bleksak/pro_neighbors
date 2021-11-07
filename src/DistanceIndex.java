@@ -1,3 +1,8 @@
+/**
+ * @author Jiri Velek
+ * structure for finding k nearest neighbors
+ * stores point index and its distance from another point
+ */
 public class DistanceIndex implements Comparable<DistanceIndex> {
     public double distance;
     public int index;

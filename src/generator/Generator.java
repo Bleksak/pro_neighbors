@@ -1,5 +1,9 @@
 package generator;
 
+/**
+ * @author Jiri Velek
+ * generates data
+ */
 public record Generator(DataSet set) {
     public Point[] generate(int n) {
         Point[] points = new Point[n];

@@ -3,6 +3,10 @@ import generator.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Jiri Velek
+ * Uniform grid for easier data manipulation
+ */
 public class UniformGrid {
 
     private final int width, height;
@@ -12,8 +16,8 @@ public class UniformGrid {
     private final MinMaxBox box;
     private final List<Point>[] grid;
 
-    private double calculateSize(double alpha, double xl, double xr, double yb, double yt, int count) {
-        return alpha * Math.sqrt(((xr - xl) * (yt - yb)) / count);
+    private double calculateSize(double alpha, int count) {
+        return alpha * Math.sqrt(((box.getMaxX() - box.getMinX()) * (box.getMaxY() - box.getMinY())) / count);
     }
 
     private int calculateRes(double max, double min) {
@@ -22,7 +26,7 @@ public class UniformGrid {
 
     public UniformGrid(Point[] points, double alpha) {
         box = new MinMaxBox(points);
-        size = calculateSize(alpha, box.getMinX(), box.getMaxX(), box.getMinY(), box.getMaxY(), points.length);
+        size = calculateSize(alpha, points.length);
         width = calculateRes(box.getMaxX(), box.getMinX());
         height = calculateRes(box.getMaxY(), box.getMinY());
 

@@ -1,5 +1,9 @@
 import generator.Point;
 
+/**
+ * @author Jiri Velek
+ * calculates the min-max box of point array
+ */
 public class MinMaxBox {
     private double minX, maxX;
     private double minY, maxY;
@@ -24,18 +28,30 @@ public class MinMaxBox {
         }
     }
 
+    /**
+     * @return max X value
+     */
     public double getMaxX() {
         return maxX;
     }
 
+    /**
+     * @return max Y value
+     */
     public double getMaxY() {
         return maxY;
     }
 
+    /**
+     * @return min X value
+     */
     public double getMinX() {
         return minX;
     }
 
+    /**
+     * @return min Y value
+     */
     public double getMinY() {
         return minY;
     }

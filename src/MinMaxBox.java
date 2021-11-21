@@ -1,5 +1,3 @@
-import generator.Point;
-
 /**
  * @author Jiri Velek
  * calculates the min-max box of point array

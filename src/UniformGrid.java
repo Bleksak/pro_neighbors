@@ -1,5 +1,3 @@
-import generator.Point;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,20 +7,11 @@ import java.util.List;
  */
 public class UniformGrid {
 
+    private static final double DEFAULT_ALPHA = 1.5;
     private final int width, height;
     private final double size;
-
-    private static final double DEFAULT_ALPHA = 1.5;
     private final MinMaxBox box;
     private final List<Point>[] grid;
-
-    private double calculateSize(double alpha, int count) {
-        return alpha * Math.sqrt(((box.getMaxX() - box.getMinX()) * (box.getMaxY() - box.getMinY())) / count);
-    }
-
-    private int calculateRes(double max, double min) {
-        return (int) ((max - min) / size);
-    }
 
     public UniformGrid(Point[] points, double alpha) {
         box = new MinMaxBox(points);
@@ -33,13 +22,13 @@ public class UniformGrid {
         //noinspection unchecked
         grid = (ArrayList<Point>[]) new ArrayList[width * height];
 
-        for(Point p : points) {
+        for (Point p : points) {
             int x = getX(p);
             int y = getY(p);
 
             int index = y * width + x;
 
-            if(grid[index] == null) {
+            if (grid[index] == null) {
                 grid[index] = new ArrayList<>(32);
             }
 
@@ -51,13 +40,23 @@ public class UniformGrid {
         this(points, DEFAULT_ALPHA);
     }
 
+    private double calculateSize(double alpha, int count) {
+        return alpha * Math.sqrt(((box.getMaxX() - box.getMinX()) * (box.getMaxY() - box.getMinY())) / count);
+    }
+
+    private int calculateRes(double max, double min) {
+        int res = (int) ((max - min) / size);
+
+        return res == 0 ? 1 : res;
+    }
+
     public List<Point> get(int x, int y) {
         return grid[y * width + x];
     }
 
     public boolean isEmpty(int x, int y) {
         List<Point> list = get(x, y);
-        if(list == null) {
+        if (list == null) {
             return true;
         }
 
@@ -94,10 +93,10 @@ public class UniformGrid {
         double yCellPos = getYAsDouble(p);
 
         double xLDist = xCellPos - x;
-        double xRDist = (x+1) - xCellPos;
+        double xRDist = (x + 1) - xCellPos;
 
         double yTDist = yCellPos - y;
-        double yBDist = (y+1) - yCellPos;
+        double yBDist = (y + 1) - yCellPos;
 
         double xDist = Math.min(xLDist, xRDist);
         double yDist = Math.min(yTDist, yBDist);

@@ -1,5 +1,3 @@
-package generator;
-
 /**
  * @author Jiri Velek
  * point in 2D space

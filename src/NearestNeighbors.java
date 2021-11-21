@@ -1,5 +1,3 @@
-import generator.Point;
-
 import java.util.Arrays;
 
 /**
@@ -9,7 +7,7 @@ import java.util.Arrays;
 public record NearestNeighbors(Point[] points, UniformGrid grid) {
 
     /**
-     * @param k how many neighbors to find
+     * @param k    how many neighbors to find
      * @param jset for which points should we find k neighbors
      * @return set c[r][s] where r is from jset and s is in range <0; k)
      */
@@ -41,14 +39,14 @@ public record NearestNeighbors(Point[] points, UniformGrid grid) {
 
                 for (int i = il; i <= ih; ++i) {
                     int ji;
-                    if(i == il || i == ih) ji = 1;
+                    if (i == il || i == ih) ji = 1;
                     else ji = jh - jl;
 
                     for (int j = jl; j <= jh; j += ji) {
                         if (!visited[i][j] && !grid.isEmpty(i, j)) {
 
-                            for(Point current : grid.get(i, j)) {
-                                if(current == p) continue;
+                            for (Point current : grid.get(i, j)) {
+                                if (current == p) continue;
 
                                 double diffX = p.getX() - current.getX();
                                 double diffY = p.getY() - current.getY();
